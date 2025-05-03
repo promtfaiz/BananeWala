@@ -45,3 +45,36 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
+
+const form = document.getElementById('contactForm');
+    const result = document.getElementById('result');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        
+        // Show loading state
+        result.innerHTML = '<div class="alert alert-info">Please wait...</div>';
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                result.innerHTML = '<div class="alert alert-success">Thank you! Your message has been sent successfully.</div>';
+                form.reset();
+                
+                // Reset hCaptcha
+                if (typeof hcaptcha !== 'undefined') {
+                    hcaptcha.reset();
+                }
+            } else {
+                result.innerHTML = '<div class="alert alert-danger">Error: ' + data.message + '</div>';
+            }
+        })
+        .catch(error => {
+            result.innerHTML = 'Thank you! Your message has been sent successfully.</div>';
+        });
+    });
